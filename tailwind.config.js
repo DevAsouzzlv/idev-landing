@@ -31,6 +31,7 @@ export default {
         'card-hover': '0 25px 50px -12px rgba(0, 0, 0, 0.12)',
         'amber-pill': '0 10px 25px -5px rgba(250, 204, 21, 0.40)',
         'dark-float': '0 25px 60px -15px rgba(13, 15, 23, 0.35)',
+        'tech-glow': '0 0 40px -10px rgba(250, 204, 21, 0.30)',
       },
       keyframes: {
         'fade-in-up': {
