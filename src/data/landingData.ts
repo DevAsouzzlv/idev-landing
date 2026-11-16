@@ -6,162 +6,6 @@ export const PLATFORM_FEE_RATE = 0.15;
 export const DEV_NET_RATE = 1 - PLATFORM_FEE_RATE;
 export const COUNTER_OFFER_INCREMENTS = [20, 40, 60] as const;
 
-export interface TelemetryEvent {
-  id: string;
-  tag: 'MATCH' | 'GITHUB_API' | 'WEBHOOK' | 'ESCROW' | 'BULLMQ';
-  message: string;
-  latencyMs: number;
-  hash: string;
-  tone: 'amber' | 'sky' | 'emerald';
-}
-
-export const LIVE_TELEMETRY_EVENTS: TelemetryEvent[] = [
-  {
-    id: 'evt-1',
-    tag: 'MATCH',
-    message: '@dev_rafa assumiu acme/checkout-api (Porte M • R$ 180) em 1 clique',
-    latencyMs: 11,
-    hash: '9f42c1a',
-    tone: 'amber',
-  },
-  {
-    id: 'evt-2',
-    tag: 'GITHUB_API',
-    message: 'PUT /repos/loja-vibe/storefront/collaborators aprovado em background',
-    latencyMs: 74,
-    hash: '3c18e0b',
-    tone: 'sky',
-  },
-  {
-    id: 'evt-3',
-    tag: 'WEBHOOK',
-    message: 'pull_request.closed (merged: true) autenticado via X-Hub-Signature-256',
-    latencyMs: 9,
-    hash: '7e21d9f',
-    tone: 'emerald',
-  },
-  {
-    id: 'evt-4',
-    tag: 'ESCROW',
-    message: 'Transação ACID liberou R$ 153,00 líquidos na carteira Pix do dev',
-    latencyMs: 14,
-    hash: '5a08b4d',
-    tone: 'emerald',
-  },
-  {
-    id: 'evt-5',
-    tag: 'BULLMQ',
-    message: 'Timer 48h IN_REVIEW ativo para PR #112 em fintech-ops/auth-gateway',
-    latencyMs: 4,
-    hash: 'd190a7c',
-    tone: 'amber',
-  },
-];
-
-export interface ArchitectureNode {
-  id: string;
-  step: string;
-  title: string;
-  engine: string;
-  protocol: string;
-  latency: string;
-  summary: string;
-  fileTarget: string;
-  codeSnippet: string;
-}
-
-export const ARCHITECTURE_NODES: ArchitectureNode[] = [
-  {
-    id: 'escrow-lock',
-    step: '01',
-    title: 'Escrow ACID Lock',
-    engine: 'PostgreSQL 15+',
-    protocol: 'ACID / FOR UPDATE',
-    latency: '14ms',
-    summary:
-      'Antes de ir para o Radar, o saldo do contratante é bloqueado em transação isolada com lock pessimista, garantindo pagamento zero-risco.',
-    fileTarget: 'apps/api/src/services/escrow.ts',
-    codeSnippet: `BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-SELECT balance FROM wallets WHERE user_id = $clientId FOR UPDATE;
-UPDATE wallets SET balance = balance - 160.00, held = held + 160.00;
-INSERT INTO escrow_ledger (task_id, amount_brl, status)
-VALUES ('tsk_48a9', 160.00, 'LOCKED');
-COMMIT; -- Custódia garantida antes do despacho`,
-  },
-  {
-    id: 'radar-ws',
-    step: '02',
-    title: 'Radar 99Negocia',
-    engine: 'Fastify + Socket.io',
-    protocol: 'WSS Full-Duplex',
-    latency: '12ms',
-    summary:
-      'Chamados chegam em tempo real para devs ONLINE na stack. Aceite direto ou contraproposta (+R$20/+R$40/+R$60) sem chat de leilão.',
-    fileTarget: 'apps/api/src/realtime/radar.ts',
-    codeSnippet: `io.to('stack:typescript').emit('radar:task_dispatched', {
-  taskId: 'tsk_48a9',
-  tier: 'M',
-  offerBrl: 160,
-  quickCounters: [180, 200, 220],
-  preMatchChatEnabled: false
-});`,
-  },
-  {
-    id: 'github-invite',
-    step: '03',
-    title: 'Convite Invisível Git',
-    engine: 'GitHub REST API v3',
-    protocol: 'OAuth + AES-256-GCM',
-    latency: '78ms',
-    summary:
-      'No instante do match, o servidor adiciona o dev como colaborador e aceita o convite via API usando tokens criptografados em repouso.',
-    fileTarget: 'apps/api/src/integrations/github.ts',
-    codeSnippet: `PUT /repos/acme/checkout-api/collaborators/dev_rafa
-Authorization: Bearer <aes_256_gcm_decrypted_token>
-{ "permission": "push" }
-
-PATCH /user/repository_invitations/98412011 -> 204 No Content
-# Branch pronta: git checkout -b idev-task-48a9`,
-  },
-  {
-    id: 'webhook-hmac',
-    step: '04',
-    title: 'Homologação HMAC',
-    engine: 'GitHub Webhooks',
-    protocol: 'X-Hub-Signature-256',
-    latency: '9ms',
-    summary:
-      'Ao clicar em Merge Pull Request no próprio GitHub, o webhook autenticado via HMAC-SHA256 valida a entrega e finaliza a tarefa.',
-    fileTarget: 'apps/api/src/routes/webhooks.ts',
-    codeSnippet: `POST /api/webhooks/github
-X-Hub-Signature-256: sha256=4b8e9f30d21a... [VERIFIED]
-{
-  "action": "closed",
-  "pull_request": { "number": 48, "merged": true }
-}
-// -> Status: COMPLETED | Escrow liberado instantaneamente`,
-  },
-  {
-    id: 'bullmq-48h',
-    step: '05',
-    title: 'Timer 48h & Pix',
-    engine: 'Redis + BullMQ',
-    protocol: 'Persistent Job Queue',
-    latency: '4ms',
-    summary:
-      'Cronômetro resiliente protege o dev contra cliente fantasma (Auto-Release 48h) e congela instantaneamente se o cliente pedir correção.',
-    fileTarget: 'apps/api/src/workers/reviewTimer.ts',
-    codeSnippet: `await reviewQueue.add('auto-release-48h', {
-  taskId: 'tsk_48a9',
-  payoutNetBrl: 136.00, // 85% líquido via Pix
-  platformFeeBrl: 24.00 // 15% taxa IDev
-}, {
-  delay: 48 * 60 * 60 * 1000,
-  jobId: 'timer:tsk_48a9'
-});`,
-  },
-];
-
 export interface SimulatorTask {
   id: string;
   tier: 'P' | 'M' | 'G';
@@ -174,7 +18,6 @@ export interface SimulatorTask {
   slaLabel: string;
   tags: string[];
   prNumber: number;
-  onlineDevs: number;
 }
 
 export const LIVE_SIMULATOR_TASKS: SimulatorTask[] = [
@@ -191,7 +34,6 @@ export const LIVE_SIMULATOR_TASKS: SimulatorTask[] = [
     slaLabel: 'SLA até 2h',
     tags: ['React', 'Tailwind', 'TypeScript'],
     prNumber: 19,
-    onlineDevs: 18,
   },
   {
     id: 'task-m',
@@ -206,7 +48,6 @@ export const LIVE_SIMULATOR_TASKS: SimulatorTask[] = [
     slaLabel: 'SLA até 6h',
     tags: ['Node.js', 'TypeScript', 'Redis'],
     prNumber: 48,
-    onlineDevs: 24,
   },
   {
     id: 'task-g',
@@ -221,23 +62,20 @@ export const LIVE_SIMULATOR_TASKS: SimulatorTask[] = [
     slaLabel: 'SLA até 24h',
     tags: ['Fastify', 'PostgreSQL', 'Docker'],
     prNumber: 112,
-    onlineDevs: 14,
   },
 ];
 
 export const TECH_STACKS = [
-  { name: 'TypeScript', dot: 'bg-blue-500', tag: 'TS 5.x' },
-  { name: 'React', dot: 'bg-cyan-400', tag: 'UI' },
-  { name: 'Node.js', dot: 'bg-emerald-500', tag: 'RUNTIME' },
-  { name: 'PostgreSQL', dot: 'bg-indigo-500', tag: 'ACID' },
-  { name: 'Redis', dot: 'bg-red-500', tag: 'BULLMQ' },
-  { name: 'Fastify', dot: 'bg-slate-900', tag: 'API' },
-  { name: 'Socket.io', dot: 'bg-amber-500', tag: 'WSS' },
-  { name: 'Docker', dot: 'bg-sky-500', tag: 'CONTAINERS' },
-  { name: 'Next.js', dot: 'bg-zinc-800', tag: 'SSR' },
-  { name: 'Tailwind CSS', dot: 'bg-teal-400', tag: 'DESIGN' },
-  { name: 'Python', dot: 'bg-amber-400', tag: 'SCRIPTS' },
-  { name: 'GitHub Webhooks', dot: 'bg-emerald-400', tag: 'HMAC' },
+  { name: 'TypeScript', dot: 'bg-blue-500' },
+  { name: 'React', dot: 'bg-cyan-400' },
+  { name: 'Node.js', dot: 'bg-emerald-500' },
+  { name: 'PostgreSQL', dot: 'bg-indigo-500' },
+  { name: 'Redis', dot: 'bg-red-500' },
+  { name: 'Fastify', dot: 'bg-slate-900' },
+  { name: 'Docker', dot: 'bg-sky-500' },
+  { name: 'Next.js', dot: 'bg-zinc-800' },
+  { name: 'Tailwind CSS', dot: 'bg-teal-400' },
+  { name: 'Python', dot: 'bg-amber-400' },
 ];
 
 export const KEY_METRICS = [
@@ -245,25 +83,21 @@ export const KEY_METRICS = [
     value: '12 min',
     label: 'Tempo médio até o match',
     highlight: 'text-[#FACC15]',
-    tag: 'WS_DISPATCH',
   },
   {
     value: '100%',
     label: 'Valor retido em custódia (Escrow)',
     highlight: 'text-emerald-400',
-    tag: 'ACID_LOCK',
   },
   {
     value: '48 horas',
     label: 'SLA de Auto-Release garantido',
-    highlight: 'text-sky-400',
-    tag: 'BULLMQ_QUEUE',
+    highlight: 'text-white',
   },
   {
     value: '0 chats',
     label: 'Antes do match para evitar leilão',
     highlight: 'text-[#FACC15]',
-    tag: '99NEGOCIA',
   },
 ];
 

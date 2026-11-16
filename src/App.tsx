@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
-  Activity,
   ArrowRight,
   ArrowUpRight,
   BadgeCheck,
@@ -18,7 +17,6 @@ import {
   Lock,
   Menu,
   MessageSquareQuote,
-  Pause,
   PauseCircle,
   Play,
   Radio,
@@ -27,12 +25,10 @@ import {
   Sparkles,
   Terminal,
   Wallet,
-  Wifi,
   X,
   Zap,
 } from 'lucide-react';
 import {
-  ARCHITECTURE_NODES,
   CLIENT_FLOW_STEPS,
   COMPARISON_ROWS,
   COMPLEXITY_TIERS,
@@ -44,7 +40,6 @@ import {
   KEY_METRICS,
   LANDING_REPO_URL,
   LIVE_SIMULATOR_TASKS,
-  LIVE_TELEMETRY_EVENTS,
   PLATFORM_FEE_RATE,
   PLATFORM_REPO_URL,
   PLATFORM_URL,
@@ -59,14 +54,12 @@ type FlowAudience = 'client' | 'developer';
 const NAV_LINKS = [
   { href: '#como-funciona', label: 'Como Funciona' },
   { href: '#simulador', label: 'Simulador' },
-  { href: '#arquitetura', label: 'Arquitetura' },
   { href: '#comparativo', label: 'Comparativo' },
   { href: '#precos', label: 'Preços & SLA' },
   { href: '#seguranca', label: 'Segurança' },
+  { href: '#validacao', label: 'Validação' },
   { href: '#faq', label: 'FAQ' },
 ];
-
-const INITIAL_TIMER_TENTHS = 47 * 36000 + 59 * 600 + 428; // 47h 59m 42s.8
 
 function formatBRL(value: number): string {
   return value.toLocaleString('pt-BR', {
@@ -77,107 +70,134 @@ function formatBRL(value: number): string {
   });
 }
 
-function formatCountdownTenths(tenthsTotal: number): {
-  hours: string;
-  minutes: string;
-  seconds: string;
-  tenths: string;
-} {
-  const safe = Math.max(0, tenthsTotal);
-  const totalSeconds = Math.floor(safe / 10);
-  const tenths = safe % 10;
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  return {
-    hours: String(hours).padStart(2, '0'),
-    minutes: String(minutes).padStart(2, '0'),
-    seconds: String(seconds).padStart(2, '0'),
-    tenths: String(tenths),
-  };
-}
-
-function LiveTelemetryBar() {
-  const [eventIndex, setEventIndex] = useState(0);
-
-  useEffect(() => {
-    const id = window.setInterval(() => {
-      setEventIndex((prev) => (prev + 1) % LIVE_TELEMETRY_EVENTS.length);
-    }, 3200);
-    return () => window.clearInterval(id);
-  }, []);
-
-  const current = LIVE_TELEMETRY_EVENTS[eventIndex];
-  const toneClasses =
-    current.tone === 'emerald'
-      ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
-      : current.tone === 'sky'
-        ? 'bg-sky-500/15 text-sky-400 border-sky-500/30'
-        : 'bg-[#FACC15]/15 text-[#FACC15] border-[#FACC15]/30';
-
+function IdvTechBackground() {
   return (
-    <div className="bg-[#07090E] text-slate-300 border-b border-white/10 px-4 py-2 text-[11px] font-mono-code">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-slate-400">
-          <span className="inline-flex items-center gap-1.5 text-emerald-400 font-semibold">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            WS_LATENCY: 12ms
-          </span>
-          <span className="hidden sm:inline text-slate-600">|</span>
-          <span className="hidden sm:inline">ESCROW_ENGINE: ACID_LOCK</span>
-          <span className="hidden lg:inline text-slate-600">|</span>
-          <span className="hidden lg:inline">WEBHOOK_HMAC: SHA256_ACTIVE</span>
-          <span className="hidden xl:inline text-slate-600">|</span>
-          <span className="hidden xl:inline">BULLMQ_WORKERS: ONLINE</span>
-        </div>
+    <div
+      aria-hidden="true"
+      className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none"
+    >
+      {/* Malha técnica base com pontos âmbar */}
+      <div className="absolute inset-0 idev-bg-grid opacity-85" />
 
-        <div
-          key={current.id}
-          className="flex items-center gap-2 min-w-0 animate-fade-in-up"
-        >
-          <span
-            className={`px-2 py-0.5 rounded border text-[10px] font-bold shrink-0 ${toneClasses}`}
-          >
-            [{current.tag}]
-          </span>
-          <span className="truncate text-slate-200">{current.message}</span>
-          <span className="hidden sm:inline text-slate-500 shrink-0">
-            {current.latencyMs}ms • #{current.hash}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
+      {/* Orbes volumétricos suaves em movimento */}
+      <div className="absolute -top-32 -left-24 h-[460px] w-[460px] rounded-full bg-[#FACC15]/25 blur-[120px] bg-orbit" />
+      <div className="absolute top-[36%] -right-28 h-[480px] w-[480px] rounded-full bg-[#0D0F17]/10 blur-[130px] bg-float-reverse" />
+      <div className="absolute -bottom-36 left-[18%] h-[420px] w-[420px] rounded-full bg-[#FACC15]/20 blur-[120px] bg-float-slow" />
 
-function SonarRadarVisual({ onlineDevs, matched }: { onlineDevs: number; matched: boolean }) {
-  return (
-    <div className="relative h-14 w-14 rounded-full border border-slate-700/90 bg-slate-950/90 flex items-center justify-center shrink-0 overflow-hidden shadow-inner">
-      <div className="absolute inset-0 radar-sweep rounded-full" />
-      <div className="absolute inset-2 rounded-full border border-slate-800" />
-      <div className="absolute inset-4 rounded-full border border-slate-800/80" />
-      <div className="absolute inset-x-0 h-px bg-slate-800/80" />
-      <div className="absolute inset-y-0 w-px bg-slate-800/80" />
-      {/* Alvos no radar */}
-      <span
-        className={`absolute top-2.5 right-3 h-1.5 w-1.5 rounded-full ${
-          matched ? 'bg-emerald-400' : 'bg-[#FACC15]'
-        }`}
-      />
-      <span className="absolute bottom-3 left-3 h-1.5 w-1.5 rounded-full bg-sky-400" />
-      {/* Centro pulsante */}
-      <span
-        className={`relative h-2.5 w-2.5 rounded-full ${
-          matched ? 'bg-emerald-400' : 'bg-[#FACC15]'
-        }`}
+      {/* Linhas de Circuito SVG com feixes de energia IDev */}
+      <svg
+        className="absolute inset-0 w-full h-full opacity-55"
+        viewBox="0 0 1440 900"
+        preserveAspectRatio="xMidYMid slice"
+        fill="none"
       >
-        <span
-          className={`absolute inset-0 rounded-full animate-pulse-ring ${
-            matched ? 'bg-emerald-400' : 'bg-[#FACC15]'
-          }`}
+        {/* Trilhas estáticas sutis */}
+        <path
+          d="M -60 150 H 240 L 310 220 H 620 L 680 160 H 1120 L 1200 240 H 1500"
+          stroke="rgba(13, 15, 23, 0.10)"
+          strokeWidth="1.5"
         />
-      </span>
-      <span className="sr-only">{onlineDevs} desenvolvedores online no radar</span>
+        <path
+          d="M -40 480 H 180 L 260 560 H 540 L 610 490 H 980 L 1060 570 H 1500"
+          stroke="rgba(13, 15, 23, 0.08)"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M 1500 760 H 1180 L 1110 690 H 740 L 660 770 H 290 L 220 700 H -60"
+          stroke="rgba(13, 15, 23, 0.09)"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M 120 -40 V 260 L 190 330 V 640 L 120 710 V 960"
+          stroke="rgba(13, 15, 23, 0.07)"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M 1310 -40 V 210 L 1240 280 V 620 L 1310 690 V 960"
+          stroke="rgba(13, 15, 23, 0.07)"
+          strokeWidth="1.5"
+        />
+
+        {/* Feixes luminosos animados percorrendo as trilhas */}
+        <path
+          d="M -60 150 H 240 L 310 220 H 620 L 680 160 H 1120 L 1200 240 H 1500"
+          stroke="#FACC15"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          className="bg-beam-line"
+        />
+        <path
+          d="M -40 480 H 180 L 260 560 H 540 L 610 490 H 980 L 1060 570 H 1500"
+          stroke="#0D0F17"
+          strokeOpacity="0.35"
+          strokeWidth="2"
+          strokeLinecap="round"
+          className="bg-beam-line-slow"
+        />
+        <path
+          d="M 1500 760 H 1180 L 1110 690 H 740 L 660 770 H 290 L 220 700 H -60"
+          stroke="#EAB308"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          className="bg-beam-line"
+        />
+
+        {/* Nós de conexão pulsantes */}
+        <circle cx="240" cy="150" r="4" fill="#FACC15" className="bg-circuit-pulse" />
+        <circle cx="680" cy="160" r="4" fill="#0D0F17" fillOpacity="0.45" className="bg-circuit-pulse" />
+        <circle cx="1200" cy="240" r="4" fill="#FACC15" className="bg-circuit-pulse" />
+        <circle cx="260" cy="560" r="4" fill="#FACC15" className="bg-circuit-pulse" />
+        <circle cx="1060" cy="570" r="4" fill="#0D0F17" fillOpacity="0.4" className="bg-circuit-pulse" />
+        <circle cx="1110" cy="690" r="4" fill="#FACC15" className="bg-circuit-pulse" />
+      </svg>
+
+      {/* Emblemas Oficiais IDev flutuando no background */}
+      <img
+        src="/assets/brand/symbol-dark.png"
+        alt=""
+        className="hidden md:block absolute top-24 left-[2.5%] w-20 h-20 rounded-3xl opacity-[0.16] shadow-lg bg-float-slow"
+      />
+      <img
+        src="/assets/brand/symbol-light.png"
+        alt=""
+        className="hidden md:block absolute bottom-20 right-[2.5%] w-24 h-24 rounded-3xl opacity-[0.18] shadow-lg bg-float-reverse"
+      />
+
+      {/* Símbolos tipográficos de código da marca IDev */}
+      <div className="hidden lg:block absolute top-[18%] right-[6%] font-mono-code text-4xl font-extrabold text-[#0D0F17]/[0.07] bg-float-reverse">
+        &lt;IDev /&gt;
+      </div>
+      <div className="hidden lg:block absolute bottom-[22%] left-[5%] font-mono-code text-5xl font-extrabold text-[#0D0F17]/[0.06] bg-float-slow">
+        &gt;_
+      </div>
+
+      {/* Elementos flutuantes temáticos do IDev distribuídos nas laterais do fundo */}
+      <div className="hidden xl:flex items-center gap-2 absolute top-44 left-[2%] px-3.5 py-2 rounded-2xl bg-[#0D0F17]/85 text-white border border-white/10 shadow-lg opacity-75 bg-float-slow">
+        <GitMerge className="w-3.5 h-3.5 text-emerald-400" />
+        <span className="font-mono-code text-[11px] font-bold">PR #48 MERGED</span>
+      </div>
+
+      <div className="hidden xl:flex items-center gap-2 absolute top-32 right-[2%] px-3.5 py-2 rounded-2xl bg-white/90 text-[#0D0F17] border border-slate-200/90 shadow-md opacity-80 bg-float-reverse">
+        <Lock className="w-3.5 h-3.5 text-[#EAB308]" />
+        <span className="font-mono-code text-[11px] font-bold">ESCROW R$ 160</span>
+      </div>
+
+      <div className="hidden xl:flex items-center gap-2 absolute top-[54%] left-[1.5%] px-3.5 py-2 rounded-2xl bg-white/90 text-slate-700 border border-slate-200/90 shadow-md opacity-75 bg-orbit">
+        <Terminal className="w-3.5 h-3.5 text-[#0D0F17]" />
+        <span className="font-mono-code text-[11px] font-semibold">
+          git push origin fix/idev
+        </span>
+      </div>
+
+      <div className="hidden xl:flex items-center gap-2 absolute top-[50%] right-[1.8%] px-3.5 py-2 rounded-2xl bg-[#FACC15]/90 text-[#0D0F17] border border-amber-300 shadow-md opacity-80 bg-float-slow">
+        <Zap className="w-3.5 h-3.5 fill-[#0D0F17]" />
+        <span className="font-mono-code text-[11px] font-extrabold">99Negocia • 1-Click</span>
+      </div>
+
+      <div className="hidden xl:flex items-center gap-2 absolute bottom-32 left-[3%] px-3.5 py-2 rounded-2xl bg-[#0D0F17]/85 text-emerald-400 border border-white/10 shadow-lg opacity-75 bg-float-reverse">
+        <Clock className="w-3.5 h-3.5 text-[#FACC15]" />
+        <span className="font-mono-code text-[11px] font-bold">48h Auto-Release</span>
+      </div>
     </div>
   );
 }
@@ -189,71 +209,11 @@ function HeroSimulator() {
   const [matched, setMatched] = useState<boolean>(false);
   const [ghStep, setGhStep] = useState<0 | 1 | 2 | 3>(0);
   const [timerState, setTimerState] = useState<TimerState>('counting');
-  const [timerTenths, setTimerTenths] = useState<number>(INITIAL_TIMER_TENTHS);
-  const [autoPlay, setAutoPlay] = useState<boolean>(true);
-  const [autoPhase, setAutoPhase] = useState<number>(0);
 
   const task =
     LIVE_SIMULATOR_TASKS.find((item) => item.id === selectedTaskId) ?? LIVE_SIMULATOR_TASKS[1];
 
-  // Tick real de 100ms para o cronômetro de 48h quando ativo
-  useEffect(() => {
-    if (timerState !== 'counting') return;
-    const id = window.setInterval(() => {
-      setTimerTenths((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 100);
-    return () => window.clearInterval(id);
-  }, [timerState]);
-
-  // Piloto automático demonstrando o fluxo completo em tempo real
-  useEffect(() => {
-    if (!autoPlay) return;
-    const id = window.setInterval(() => {
-      setAutoPhase((prev) => (prev + 1) % 8);
-    }, 2600);
-    return () => window.clearInterval(id);
-  }, [autoPlay]);
-
-  useEffect(() => {
-    if (!autoPlay) return;
-    if (autoPhase === 0) {
-      setActiveTab('radar');
-      setOfferPrice(task.basePrice);
-      setMatched(false);
-      setGhStep(0);
-      setTimerState('counting');
-      setTimerTenths(INITIAL_TIMER_TENTHS);
-    } else if (autoPhase === 1) {
-      setActiveTab('radar');
-      setOfferPrice(task.basePrice + 20);
-      setMatched(false);
-    } else if (autoPhase === 2) {
-      setActiveTab('radar');
-      setMatched(true);
-    } else if (autoPhase === 3) {
-      setActiveTab('github');
-      setGhStep(1);
-    } else if (autoPhase === 4) {
-      setActiveTab('github');
-      setGhStep(2);
-    } else if (autoPhase === 5) {
-      setActiveTab('github');
-      setGhStep(3);
-    } else if (autoPhase === 6) {
-      setActiveTab('timer');
-      setTimerState('counting');
-    } else if (autoPhase === 7) {
-      setActiveTab('timer');
-      setTimerState('auto_released');
-    }
-  }, [autoPhase, autoPlay, task.basePrice]);
-
-  const stopAutoPlay = () => {
-    if (autoPlay) setAutoPlay(false);
-  };
-
   const handleSelectTask = (id: string) => {
-    stopAutoPlay();
     const found = LIVE_SIMULATOR_TASKS.find((item) => item.id === id);
     if (!found) return;
     setSelectedTaskId(found.id);
@@ -261,644 +221,405 @@ function HeroSimulator() {
     setMatched(false);
     setGhStep(0);
     setTimerState('counting');
-    setTimerTenths(INITIAL_TIMER_TENTHS);
   };
 
   const handleResetRadar = () => {
-    stopAutoPlay();
     setOfferPrice(task.basePrice);
     setMatched(false);
   };
 
-  const timeParts = formatCountdownTenths(timerTenths);
-
   return (
     <div
       id="simulador"
-      className="animate-float-slow relative p-[1.5px] rounded-[1.6rem] tech-border-glow shadow-dark-float scroll-mt-28"
+      className="animate-float-slow relative bg-[#0D0F17] text-white rounded-3xl p-5 sm:p-6 shadow-dark-float border border-slate-800 space-y-4 scroll-mt-28"
     >
-      <div className="relative bg-[#0D0F17] text-white rounded-3xl p-5 sm:p-6 space-y-4 overflow-hidden scanline-panel">
-        {/* Feixe scanline horizontal sutil */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-16 scanline-beam" />
+      {/* Header estilo janela de terminal */}
+      <div className="flex items-center justify-between border-b border-slate-800 pb-3.5 gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="h-3 w-3 rounded-full bg-rose-500/80 shrink-0" />
+          <span className="h-3 w-3 rounded-full bg-amber-400/90 shrink-0" />
+          <span className="h-3 w-3 rounded-full bg-emerald-400/90 shrink-0" />
+          <span className="ml-1.5 font-mono-code text-[11px] text-slate-400 truncate">
+            idev://simulador-ao-vivo
+          </span>
+        </div>
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-[10px] font-bold border border-emerald-500/30 shrink-0">
+          <Radio className="w-3 h-3 animate-pulse" />
+          ONLINE
+        </span>
+      </div>
 
-        {/* Header estilo janela de terminal/HUD */}
-        <div className="relative flex items-center justify-between border-b border-slate-800/90 pb-3.5 gap-2">
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="h-2.5 w-2.5 rounded-full bg-rose-500/80 shrink-0" />
-            <span className="h-2.5 w-2.5 rounded-full bg-amber-400/90 shrink-0" />
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/90 shrink-0" />
-            <span className="ml-1.5 font-mono-code text-[11px] text-slate-400 truncate">
-              hud://radar-99negocia.live
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0">
+      {/* Seletor das 3 abas do Simulador */}
+      <div className="grid grid-cols-3 gap-1.5 bg-slate-900/90 p-1 rounded-2xl border border-slate-800">
+        {(
+          [
+            { id: 'radar', label: '1. Radar 99Negocia' },
+            { id: 'github', label: '2. GitHub API' },
+            { id: 'timer', label: '3. Timer 48h' },
+          ] as const
+        ).map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
             <button
+              key={tab.id}
               type="button"
-              onClick={() => setAutoPlay((prev) => !prev)}
-              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold border transition-colors ${
-                autoPlay
-                  ? 'bg-[#FACC15]/15 text-[#FACC15] border-[#FACC15]/40'
-                  : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-white'
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-2.5 py-2 rounded-xl text-[11px] font-bold transition-all ${
+                isActive
+                  ? 'bg-[#FACC15] text-[#0D0F17] shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/80'
               }`}
             >
-              {autoPlay ? <Pause className="w-2.5 h-2.5" /> : <Play className="w-2.5 h-2.5" />}
-              <span>{autoPlay ? 'Auto Demo' : 'Manual'}</span>
+              {tab.label}
             </button>
-
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-[10px] font-bold border border-emerald-500/30">
-              <Radio className="w-3 h-3 animate-pulse" />
-              ONLINE
-            </span>
-          </div>
-        </div>
-
-        {/* Seletor das 3 abas do Simulador */}
-        <div className="relative grid grid-cols-3 gap-1.5 bg-slate-900/90 p-1 rounded-2xl border border-slate-800">
-          {(
-            [
-              { id: 'radar', label: '1. Radar 99Negocia' },
-              { id: 'github', label: '2. GitHub API' },
-              { id: 'timer', label: '3. Timer 48h' },
-            ] as const
-          ).map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => {
-                  stopAutoPlay();
-                  setActiveTab(tab.id);
-                }}
-                className={`px-2 py-2 rounded-xl text-[11px] font-bold transition-all ${
-                  isActive
-                    ? 'bg-[#FACC15] text-[#0D0F17] shadow-sm'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/80'
-                }`}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* ABA 1: RADAR 99NEGOCIA */}
-        {activeTab === 'radar' && (
-          <div className="relative space-y-3.5 animate-fade-in-up">
-            {/* Radar Sonar + Seletor Porte P / M / G */}
-            <div className="flex items-center justify-between gap-3 bg-slate-900/60 border border-slate-800/90 rounded-2xl p-3">
-              <div className="flex items-center gap-3 min-w-0">
-                <SonarRadarVisual onlineDevs={task.onlineDevs} matched={matched} />
-                <div className="min-w-0">
-                  <div className="text-[10px] font-mono-code text-[#FACC15] uppercase tracking-wider">
-                    {matched ? 'MATCH ATÔMICO CONFIRMADO' : 'VARREDURA EM TEMPO REAL'}
-                  </div>
-                  <div className="text-xs font-bold text-white truncate">
-                    {task.onlineDevs} devs compatíveis online agora
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-1 shrink-0">
-                {LIVE_SIMULATOR_TASKS.map((item) => {
-                  const selected = item.id === task.id;
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => handleSelectTask(item.id)}
-                      className={`px-2.5 py-1 rounded-lg font-mono-code text-[11px] font-bold transition-colors ${
-                        selected
-                          ? 'bg-[#FACC15] text-[#0D0F17]'
-                          : 'bg-slate-950 text-slate-400 border border-slate-800 hover:text-white'
-                      }`}
-                    >
-                      {item.tier}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3">
-              <div className="flex items-center justify-between gap-2 flex-wrap">
-                <span className="px-2.5 py-0.5 rounded-full bg-[#FACC15]/15 text-[#FACC15] border border-[#FACC15]/30 text-[10px] font-bold">
-                  {task.badge} • {task.slaLabel}
-                </span>
-                <span className="font-mono-code text-[11px] text-sky-400">{task.repo}</span>
-              </div>
-
-              <h3 className="text-sm font-bold text-white leading-snug">{task.title}</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">{task.description}</p>
-
-              <div className="flex flex-wrap gap-1.5">
-                {task.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono-code text-[10px] border border-slate-700/70"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
-              <div className="pt-3 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                  <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
-                    Oferta em Custódia (Escrow)
-                  </div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-extrabold text-[#FACC15] font-mono-code">
-                      R$ {offerPrice}
-                    </span>
-                    <span className="text-[11px] font-mono-code text-emerald-400">
-                      ({formatBRL(offerPrice * DEV_NET_RATE)} líq. dev)
-                    </span>
-                  </div>
-                </div>
-
-                {!matched ? (
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    {COUNTER_OFFER_INCREMENTS.map((inc) => (
-                      <button
-                        key={inc}
-                        type="button"
-                        onClick={() => {
-                          stopAutoPlay();
-                          setOfferPrice((p) => p + inc);
-                        }}
-                        className="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-[11px] font-bold text-white border border-slate-700 transition-colors"
-                      >
-                        +R${inc}
-                      </button>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        stopAutoPlay();
-                        setMatched(true);
-                      }}
-                      className="px-3.5 py-1.5 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#0D0F17] text-xs font-extrabold transition-all shadow-amber-pill"
-                    >
-                      Aceitar Agora
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        stopAutoPlay();
-                        setGhStep(1);
-                        setActiveTab('github');
-                      }}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold hover:bg-emerald-500/30 transition-colors"
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      Match! Ver GitHub API →
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleResetRadar}
-                      title="Resetar simulação"
-                      className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700"
-                    >
-                      <RotateCcw className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="bg-black/65 rounded-2xl p-3.5 border border-slate-800/90 font-mono-code text-[11px] space-y-1.5">
-              <div className="flex items-center gap-2 text-slate-300">
-                <Terminal className="w-3.5 h-3.5 text-[#FACC15] shrink-0" />
-                <span className="truncate">
-                  $ git checkout -b {task.branch}
-                  <span className="inline-block w-1.5 h-3.5 bg-[#FACC15] align-middle ml-1 cursor-blink" />
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-emerald-400 gap-2">
-                <span className="inline-flex items-center gap-1.5 truncate">
-                  <Lock className="w-3.5 h-3.5 shrink-0" />
-                  {matched
-                    ? `ACID Lock travado em R$ ${offerPrice} • Convite disparado`
-                    : 'Escrow preliminar ativo • Zero chat pré-match'}
-                </span>
-                <span className="text-[10px] text-slate-500 shrink-0">WSS 12ms</span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ABA 2: GITHUB API & WEBHOOK */}
-        {activeTab === 'github' && (
-          <div className="relative space-y-3.5 animate-fade-in-up">
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-white flex items-center gap-2">
-                  <Github className="w-4 h-4 text-[#FACC15]" />
-                  Pipeline Automatizado GitHub API
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    stopAutoPlay();
-                    setGhStep(0);
-                  }}
-                  className="text-[11px] text-slate-400 hover:text-white inline-flex items-center gap-1"
-                >
-                  <RotateCcw className="w-3 h-3" /> Reiniciar
-                </button>
-              </div>
-
-              <div className="space-y-2">
-                {[
-                  {
-                    step: 1 as const,
-                    title: '1. Aceitar Convite Invisível (1 Clique)',
-                    endpoint: 'PATCH /user/repository_invitations/{id}',
-                    doneLabel: 'ACEITO',
-                  },
-                  {
-                    step: 2 as const,
-                    title: `2. Abrir Pull Request #${task.prNumber}`,
-                    endpoint: `git push origin ${task.branch} → IN_REVIEW`,
-                    doneLabel: 'PR ABERTO',
-                  },
-                  {
-                    step: 3 as const,
-                    title: '3. Cliente dá Merge no GitHub',
-                    endpoint: 'Webhook: pull_request.closed (merged: true)',
-                    doneLabel: 'PAGO!',
-                  },
-                ].map((item) => {
-                  const completed = ghStep >= item.step;
-                  const isFinal = item.step === 3 && completed;
-                  return (
-                    <button
-                      key={item.step}
-                      type="button"
-                      onClick={() => {
-                        stopAutoPlay();
-                        setGhStep(item.step);
-                      }}
-                      className={`w-full text-left p-3 rounded-xl border transition-all flex items-center justify-between gap-2 ${
-                        isFinal
-                          ? 'bg-[#FACC15]/15 border-[#FACC15]/50 text-[#FACC15]'
-                          : completed
-                            ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300'
-                            : 'bg-slate-950/70 border-slate-800 text-slate-300 hover:border-[#FACC15]/60'
-                      }`}
-                    >
-                      <div className="min-w-0">
-                        <div className="text-xs font-bold">{item.title}</div>
-                        <div className="font-mono-code text-[10px] text-slate-400 truncate mt-0.5">
-                          {item.endpoint}
-                        </div>
-                      </div>
-                      <span className="text-[10px] font-mono-code px-2 py-0.5 rounded bg-slate-800 shrink-0">
-                        {completed ? item.doneLabel : 'EXECUTAR'}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="bg-black/65 rounded-2xl p-3.5 border border-slate-800/90 font-mono-code text-[11px] space-y-1">
-              {ghStep === 0 && (
-                <div className="text-slate-400">
-                  &gt; Aguardando trigger... Clique em um estágio para ver a chamada real
-                  <span className="inline-block w-1.5 h-3.5 bg-[#FACC15] align-middle ml-1 cursor-blink" />
-                </div>
-              )}
-              {ghStep === 1 && (
-                <>
-                  <div className="text-sky-400">
-                    $ git clone https://github.com/{task.repo}.git
-                  </div>
-                  <div className="text-emerald-400">
-                    ✓ 204 No Content • Permissão push concedida sem painel manual
-                  </div>
-                </>
-              )}
-              {ghStep === 2 && (
-                <>
-                  <div className="text-[#FACC15] flex items-center gap-1.5">
-                    <GitPullRequest className="w-3.5 h-3.5" />
-                    PR #{task.prNumber} entregue • Status: IN_REVIEW
-                  </div>
-                  <div className="text-slate-300">
-                    ✓ BullMQ disparou Timer de Proteção de 48h para homologação
-                  </div>
-                </>
-              )}
-              {ghStep === 3 && (
-                <>
-                  <div className="text-emerald-400 flex items-center gap-1.5">
-                    <GitMerge className="w-3.5 h-3.5" />
-                    X-Hub-Signature-256 [VERIFIED] • COMPLETED
-                  </div>
-                  <div className="text-[#FACC15]">
-                    ✓ {formatBRL(offerPrice * DEV_NET_RATE)} liberado na carteira Pix do dev
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* ABA 3: TIMER 48H & PROTEÇÃO BILATERAL */}
-        {activeTab === 'timer' && (
-          <div className="relative space-y-3.5 animate-fade-in-up">
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-4">
-              <div className="flex items-center justify-between gap-2">
-                <div>
-                  <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold flex items-center gap-1.5">
-                    <Activity className="w-3 h-3 text-[#FACC15]" />
-                    Cronômetro em Tempo Real (BullMQ)
-                  </div>
-                  <div className="text-2xl sm:text-[1.65rem] font-extrabold font-mono-code text-white mt-1 tracking-tight">
-                    {timerState === 'auto_released' ? (
-                      <span className="text-emerald-400">00h : 00m : 00s . 0</span>
-                    ) : (
-                      <>
-                        <span>{timeParts.hours}h</span>
-                        <span className="text-slate-500"> : </span>
-                        <span>{timeParts.minutes}m</span>
-                        <span className="text-slate-500"> : </span>
-                        <span className="text-[#FACC15]">{timeParts.seconds}s</span>
-                        <span className="text-slate-500 text-lg">.{timeParts.tenths}</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                <span
-                  className={`px-2.5 py-1 rounded-full text-[10px] font-bold border shrink-0 ${
-                    timerState === 'counting'
-                      ? 'bg-[#FACC15]/15 text-[#FACC15] border-[#FACC15]/40'
-                      : timerState === 'paused'
-                        ? 'bg-rose-500/15 text-rose-300 border-rose-500/40'
-                        : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40'
-                  }`}
-                >
-                  {timerState === 'counting' && 'IN_REVIEW'}
-                  {timerState === 'paused' && 'REVISION_REQUESTED'}
-                  {timerState === 'auto_released' && 'AUTO_RELEASE'}
-                </span>
-              </div>
-
-              <div className="h-2.5 w-full rounded-full bg-slate-800 overflow-hidden">
-                <div
-                  className={`h-full transition-all duration-500 ${
-                    timerState === 'counting'
-                      ? 'w-11/12 bg-gradient-to-r from-amber-500 to-[#FACC15]'
-                      : timerState === 'paused'
-                        ? 'w-3/4 bg-rose-500'
-                        : 'w-full bg-emerald-400'
-                  }`}
-                />
-              </div>
-
-              <p className="text-xs text-slate-300 leading-relaxed">
-                {timerState === 'counting' &&
-                  'Contagem regressiva resiliente ativa em Redis + BullMQ. Se o cliente não agir em 48h, o pagamento cai automaticamente para o dev.'}
-                {timerState === 'paused' &&
-                  'Cliente clicou em "Solicitar Correção". O cronômetro congela imediatamente e o Escrow segue retido até os novos commits no PR.'}
-                {timerState === 'auto_released' &&
-                  `Cliente inativo após 48h. Auto-Release concluído: ${formatBRL(
-                    offerPrice * DEV_NET_RATE
-                  )} transferidos para a carteira Pix do dev!`}
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {timerState !== 'paused' ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      stopAutoPlay();
-                      setTimerState('paused');
-                    }}
-                    className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-200 border border-rose-500/30 text-xs font-bold transition-colors"
-                  >
-                    <PauseCircle className="w-3.5 h-3.5" />
-                    Solicitar Correção (Pausa)
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      stopAutoPlay();
-                      setTimerTenths(INITIAL_TIMER_TENTHS);
-                      setTimerState('counting');
-                    }}
-                    className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-200 border border-sky-500/30 text-xs font-bold transition-colors"
-                  >
-                    <Play className="w-3.5 h-3.5" />
-                    Reenviar PR (Reinicia 48h)
-                  </button>
-                )}
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    stopAutoPlay();
-                    if (timerState === 'auto_released') {
-                      setTimerTenths(INITIAL_TIMER_TENTHS);
-                      setTimerState('counting');
-                    } else {
-                      setTimerState('auto_released');
-                    }
-                  }}
-                  className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#0D0F17] text-xs font-extrabold transition-colors"
-                >
-                  <Zap className="w-3.5 h-3.5" />
-                  {timerState === 'auto_released'
-                    ? 'Resetar Cronômetro'
-                    : 'Simular 48h (Auto-Release)'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function TechMarquee() {
-  const repeated = [...TECH_STACKS, ...TECH_STACKS];
-
-  return (
-    <section
-      aria-label="Stacks e protocolos suportados"
-      className="relative overflow-hidden py-2 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
-    >
-      <div className="animate-marquee gap-3">
-        {repeated.map((tech, idx) => (
-          <div
-            key={`${tech.name}-${idx}`}
-            className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-white border border-slate-200/90 shadow-sm text-xs font-bold text-[#0D0F17] hover:border-[#FACC15] transition-colors shrink-0"
-          >
-            <span className={`h-2 w-2 rounded-full ${tech.dot}`} />
-            <span>{tech.name}</span>
-            <span className="font-mono-code text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500">
-              {tech.tag}
-            </span>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function ArchitectureCircuitSection() {
-  const [activeIndex, setActiveIndex] = useState<number>(0);
-  const [autoCycle, setAutoCycle] = useState<boolean>(true);
-
-  useEffect(() => {
-    if (!autoCycle) return;
-    const id = window.setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % ARCHITECTURE_NODES.length);
-    }, 3600);
-    return () => window.clearInterval(id);
-  }, [autoCycle]);
-
-  const activeNode = ARCHITECTURE_NODES[activeIndex];
-
-  return (
-    <section
-      id="arquitetura"
-      className="relative bg-[#0D0F17] text-white rounded-4xl sm:rounded-5xl p-7 sm:p-10 lg:p-12 border border-slate-800 shadow-xl overflow-hidden space-y-8 scroll-mt-28"
-    >
-      <div className="pointer-events-none absolute inset-0 bg-tech-grid-dark opacity-70" />
-      <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-[#FACC15]/10 blur-3xl" />
-
-      <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <span className="text-xs font-extrabold text-[#FACC15] uppercase tracking-widest inline-flex items-center gap-2">
-            <Wifi className="w-3.5 h-3.5" />
-            Circuito de Arquitetura & Payloads ao Vivo
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">
-            Como os dados trafegam do match ao Pix em milissegundos
-          </h2>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setAutoCycle((prev) => !prev)}
-          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold border self-start transition-colors ${
-            autoCycle
-              ? 'bg-[#FACC15]/15 text-[#FACC15] border-[#FACC15]/40'
-              : 'bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-500'
-          }`}
-        >
-          {autoCycle ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-          <span>{autoCycle ? 'Ciclo Automático Ativo' : 'Ativar Ciclo Automático'}</span>
-        </button>
-      </div>
-
-      {/* Trilha de 5 Nós Conectados */}
-      <div className="relative grid grid-cols-1 lg:grid-cols-5 gap-3 lg:gap-2 items-stretch">
-        {ARCHITECTURE_NODES.map((node, index) => {
-          const isSelected = index === activeIndex;
-          const isLast = index === ARCHITECTURE_NODES.length - 1;
-          return (
-            <div key={node.id} className="relative flex flex-col lg:flex-row items-stretch">
-              <button
-                type="button"
-                onClick={() => {
-                  setAutoCycle(false);
-                  setActiveIndex(index);
-                }}
-                className={`flex-1 text-left p-4 rounded-2xl border transition-all duration-300 space-y-2 ${
-                  isSelected
-                    ? 'bg-slate-900 border-[#FACC15] shadow-tech-glow -translate-y-0.5'
-                    : 'bg-slate-950/75 border-slate-800 hover:border-slate-600'
-                }`}
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span
-                    className={`font-mono-code text-[11px] font-extrabold px-2 py-0.5 rounded-md ${
-                      isSelected
-                        ? 'bg-[#FACC15] text-[#0D0F17]'
-                        : 'bg-slate-800 text-slate-400'
-                    }`}
-                  >
-                    NODE {node.step}
-                  </span>
-                  <span className="font-mono-code text-[10px] text-emerald-400">
-                    {node.latency}
-                  </span>
-                </div>
-                <div className="text-sm font-bold text-white leading-snug">{node.title}</div>
-                <div className="font-mono-code text-[10px] text-sky-400 truncate">
-                  {node.engine}
-                </div>
-              </button>
-
-              {!isLast && (
-                <>
-                  {/* Conector Desktop Horizontal com pacote de dados animado */}
-                  <div className="hidden lg:flex items-center justify-center w-6 shrink-0">
-                    <div className="relative w-full h-[2px] bg-slate-800 overflow-hidden rounded-full">
-                      <span className="absolute top-0 left-0 h-full w-3 bg-gradient-to-r from-transparent via-[#FACC15] to-transparent animate-packet-flow" />
-                    </div>
-                  </div>
-                  {/* Conector Mobile Vertical */}
-                  <div className="flex lg:hidden items-center justify-center h-4">
-                    <div className="relative w-[2px] h-full bg-slate-800 overflow-hidden rounded-full">
-                      <span className="absolute left-0 top-0 w-full h-2 bg-gradient-to-b from-transparent via-[#FACC15] to-transparent animate-packet-flow-v" />
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
           );
         })}
       </div>
 
-      {/* Painel Inspetor Estilo IDE / Terminal */}
-      <div className="relative bg-black/75 border border-slate-800 rounded-3xl overflow-hidden scanline-panel">
-        <div className="flex flex-wrap items-center justify-between gap-2 px-5 py-3 bg-slate-900/90 border-b border-slate-800">
-          <div className="flex items-center gap-2.5">
-            <Terminal className="w-4 h-4 text-[#FACC15]" />
-            <span className="font-mono-code text-xs text-slate-200">{activeNode.fileTarget}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="font-mono-code text-[10px] px-2.5 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border border-sky-500/30">
-              {activeNode.protocol}
+      {/* ABA 1: RADAR 99NEGOCIA */}
+      {activeTab === 'radar' && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[11px] text-slate-400 font-semibold">
+              Escolha um chamado real:
             </span>
-            <span className="font-mono-code text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-              {activeNode.latency}
-            </span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-5 sm:p-6 items-center">
-          <div className="lg:col-span-5 space-y-3">
-            <div className="text-xs font-mono-code text-[#FACC15] uppercase">
-              Estágio {activeNode.step} • {activeNode.engine}
+            <div className="flex items-center gap-1.5">
+              {LIVE_SIMULATOR_TASKS.map((item) => {
+                const selected = item.id === task.id;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => handleSelectTask(item.id)}
+                    className={`px-2.5 py-1 rounded-lg font-mono-code text-[11px] font-bold transition-colors ${
+                      selected
+                        ? 'bg-[#FACC15]/20 text-[#FACC15] border border-[#FACC15]/50'
+                        : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-white'
+                    }`}
+                  >
+                    Porte {item.tier}
+                  </button>
+                );
+              })}
             </div>
-            <h3 className="text-xl font-extrabold text-white">{activeNode.title}</h3>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              {activeNode.summary}
-            </p>
           </div>
 
-          <div className="lg:col-span-7 bg-[#090C12] border border-slate-800/90 rounded-2xl p-4 overflow-x-auto">
-            <pre className="font-mono-code text-xs text-emerald-300 leading-relaxed whitespace-pre">
-              <code>{activeNode.codeSnippet}</code>
-              <span className="inline-block w-2 h-3.5 bg-[#FACC15] align-middle ml-1 cursor-blink" />
-            </pre>
+          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#FACC15]/15 text-[#FACC15] border border-[#FACC15]/30 text-[10px] font-bold">
+                {task.badge} • {task.slaLabel}
+              </span>
+              <span className="font-mono-code text-[11px] text-slate-400">{task.repo}</span>
+            </div>
+
+            <h3 className="text-sm font-bold text-white leading-snug">{task.title}</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">{task.description}</p>
+
+            <div className="flex flex-wrap gap-1.5">
+              {task.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono-code text-[10px]"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            <div className="pt-3 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
+                  Oferta em Custódia (Escrow)
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-extrabold text-[#FACC15] font-mono-code">
+                    R$ {offerPrice}
+                  </span>
+                  <span className="text-[11px] font-mono-code text-emerald-400">
+                    ({formatBRL(offerPrice * DEV_NET_RATE)} líq. dev)
+                  </span>
+                </div>
+              </div>
+
+              {!matched ? (
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {COUNTER_OFFER_INCREMENTS.map((inc) => (
+                    <button
+                      key={inc}
+                      type="button"
+                      onClick={() => setOfferPrice((p) => p + inc)}
+                      className="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-[11px] font-bold text-white border border-slate-700 transition-colors"
+                    >
+                      +R${inc}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setMatched(true)}
+                    className="px-3.5 py-1.5 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#0D0F17] text-xs font-extrabold transition-colors"
+                  >
+                    Aceitar Agora
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setGhStep(1);
+                      setActiveTab('github');
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold hover:bg-emerald-500/30 transition-colors"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    Match! Ir ao GitHub →
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleResetRadar}
+                    title="Resetar simulação"
+                    className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="bg-black/50 rounded-2xl p-3.5 border border-slate-800/80 font-mono-code text-[11px] space-y-1.5">
+            <div className="flex items-center gap-2 text-slate-400">
+              <Terminal className="w-3.5 h-3.5 text-[#FACC15] shrink-0" />
+              <span className="truncate">$ git checkout -b {task.branch}</span>
+            </div>
+            <div className="flex items-center justify-between text-emerald-400 gap-2">
+              <span className="inline-flex items-center gap-1.5 truncate">
+                <Lock className="w-3.5 h-3.5 shrink-0" />
+                {matched
+                  ? `Match atômico concluído • Escrow R$ ${offerPrice} travado`
+                  : 'Escrow preliminar ativo • Sem chat pré-match'}
+              </span>
+              <span className="text-[10px] text-slate-500 shrink-0">{task.slaLabel}</span>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      )}
+
+      {/* ABA 2: GITHUB API & WEBHOOK */}
+      {activeTab === 'github' && (
+        <div className="space-y-3.5">
+          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-white flex items-center gap-2">
+                <Github className="w-4 h-4 text-[#FACC15]" />
+                Automação Invisível via GitHub API
+              </span>
+              <button
+                type="button"
+                onClick={() => setGhStep(0)}
+                className="text-[11px] text-slate-400 hover:text-white inline-flex items-center gap-1"
+              >
+                <RotateCcw className="w-3 h-3" /> Reiniciar
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={() => setGhStep(1)}
+                className={`w-full text-left p-3 rounded-xl border transition-all flex items-center justify-between gap-2 ${
+                  ghStep >= 1
+                    ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300'
+                    : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:border-[#FACC15]/60'
+                }`}
+              >
+                <div className="min-w-0">
+                  <div className="text-xs font-bold">1. Aceitar Convite Invisível (1 Clique)</div>
+                  <div className="font-mono-code text-[10px] text-slate-400 truncate mt-0.5">
+                    PATCH /user/repository_invitations/{'{id}'}
+                  </div>
+                </div>
+                <span className="text-[10px] font-mono-code px-2 py-0.5 rounded bg-slate-800 shrink-0">
+                  {ghStep >= 1 ? 'ACEITO' : 'SIMULAR'}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setGhStep(2)}
+                className={`w-full text-left p-3 rounded-xl border transition-all flex items-center justify-between gap-2 ${
+                  ghStep >= 2
+                    ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300'
+                    : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:border-[#FACC15]/60'
+                }`}
+              >
+                <div className="min-w-0">
+                  <div className="text-xs font-bold">2. Abrir Pull Request #{task.prNumber}</div>
+                  <div className="font-mono-code text-[10px] text-slate-400 truncate mt-0.5">
+                    git push origin {task.branch} → IN_REVIEW (Timer 48h ON)
+                  </div>
+                </div>
+                <span className="text-[10px] font-mono-code px-2 py-0.5 rounded bg-slate-800 shrink-0">
+                  {ghStep >= 2 ? 'PR ABERTO' : 'SIMULAR'}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setGhStep(3)}
+                className={`w-full text-left p-3 rounded-xl border transition-all flex items-center justify-between gap-2 ${
+                  ghStep >= 3
+                    ? 'bg-[#FACC15]/15 border-[#FACC15]/50 text-[#FACC15]'
+                    : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:border-[#FACC15]/60'
+                }`}
+              >
+                <div className="min-w-0">
+                  <div className="text-xs font-bold">3. Cliente dá Merge no GitHub</div>
+                  <div className="font-mono-code text-[10px] text-slate-400 truncate mt-0.5">
+                    Webhook: pull_request.closed (merged: true)
+                  </div>
+                </div>
+                <span className="text-[10px] font-mono-code px-2 py-0.5 rounded bg-slate-800 shrink-0">
+                  {ghStep >= 3 ? 'PAGO!' : 'SIMULAR'}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-black/50 rounded-2xl p-3.5 border border-slate-800/80 font-mono-code text-[11px] space-y-1">
+            {ghStep === 0 && (
+              <div className="text-slate-400">
+                Clique nos passos acima para simular a integração real GitHub API + HMAC Webhook.
+              </div>
+            )}
+            {ghStep === 1 && (
+              <>
+                <div className="text-sky-400">$ git clone https://github.com/{task.repo}.git</div>
+                <div className="text-emerald-400">
+                  ✓ Permissão push concedida automaticamente sem painel manual
+                </div>
+              </>
+            )}
+            {ghStep === 2 && (
+              <>
+                <div className="text-[#FACC15] flex items-center gap-1.5">
+                  <GitPullRequest className="w-3.5 h-3.5" />
+                  PR #{task.prNumber} entregue • Status: IN_REVIEW
+                </div>
+                <div className="text-slate-300">
+                  ✓ BullMQ disparou Timer de Proteção de 48h para o cliente testar
+                </div>
+              </>
+            )}
+            {ghStep === 3 && (
+              <>
+                <div className="text-emerald-400 flex items-center gap-1.5">
+                  <GitMerge className="w-3.5 h-3.5" />
+                  X-Hub-Signature-256 validado • COMPLETED
+                </div>
+                <div className="text-[#FACC15]">
+                  ✓ {formatBRL(offerPrice * DEV_NET_RATE)} liberado na carteira do dev (Pix)
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ABA 3: TIMER 48H & PROTEÇÃO BILATERAL */}
+      {activeTab === 'timer' && (
+        <div className="space-y-3.5">
+          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-4">
+            <div className="flex items-center justify-between gap-2">
+              <div>
+                <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
+                  Janela de Homologação (BullMQ)
+                </div>
+                <div className="text-2xl font-extrabold font-mono-code text-white mt-0.5">
+                  {timerState === 'counting' && '47h : 59m : 42s'}
+                  {timerState === 'paused' && '42h : 18m : 05s (PAUSADO)'}
+                  {timerState === 'auto_released' && '00h : 00m : 00s'}
+                </div>
+              </div>
+
+              <span
+                className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${
+                  timerState === 'counting'
+                    ? 'bg-[#FACC15]/15 text-[#FACC15] border-[#FACC15]/40'
+                    : timerState === 'paused'
+                      ? 'bg-rose-500/15 text-rose-300 border-rose-500/40'
+                      : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40'
+                }`}
+              >
+                {timerState === 'counting' && 'IN_REVIEW'}
+                {timerState === 'paused' && 'REVISION_REQUESTED'}
+                {timerState === 'auto_released' && 'AUTO_RELEASE'}
+              </span>
+            </div>
+
+            <div className="h-2.5 w-full rounded-full bg-slate-800 overflow-hidden">
+              <div
+                className={`h-full transition-all duration-500 ${
+                  timerState === 'counting'
+                    ? 'w-11/12 bg-[#FACC15]'
+                    : timerState === 'paused'
+                      ? 'w-3/4 bg-rose-500'
+                      : 'w-full bg-emerald-400'
+                }`}
+              />
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed">
+              {timerState === 'counting' &&
+                'O cliente tem 48h para testar o PR. Se não aprovar nem pedir correção, o pagamento é liberado automaticamente ao dev.'}
+              {timerState === 'paused' &&
+                'Cliente encontrou falha e clicou em "Solicitar Correção". O timer congela e o Escrow permanece 100% retido até o novo commit.'}
+              {timerState === 'auto_released' &&
+                `Cliente inativo após 48h ("cliente fantasma"). O worker BullMQ executou Auto-Release e transferiu ${formatBRL(
+                  offerPrice * DEV_NET_RATE
+                )} para o dev!`}
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {timerState !== 'paused' ? (
+                <button
+                  type="button"
+                  onClick={() => setTimerState('paused')}
+                  className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-200 border border-rose-500/30 text-xs font-bold transition-colors"
+                >
+                  <PauseCircle className="w-3.5 h-3.5" />
+                  Solicitar Correção (Pausa)
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setTimerState('counting')}
+                  className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-200 border border-sky-500/30 text-xs font-bold transition-colors"
+                >
+                  <Play className="w-3.5 h-3.5" />
+                  Reenviar PR (Reinicia 48h)
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={() =>
+                  setTimerState((prev) =>
+                    prev === 'auto_released' ? 'counting' : 'auto_released'
+                  )
+                }
+                className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#0D0F17] text-xs font-extrabold transition-colors"
+              >
+                <Zap className="w-3.5 h-3.5" />
+                {timerState === 'auto_released'
+                  ? 'Resetar Cronômetro'
+                  : 'Simular 48h (Auto-Release)'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -919,7 +640,7 @@ function NetEarningsCalculator() {
   return (
     <section
       id="precos"
-      className="bg-white rounded-4xl p-7 sm:p-10 lg:p-12 border border-slate-200/80 shadow-soft space-y-8 scroll-mt-28"
+      className="bg-white/95 backdrop-blur-md rounded-4xl p-7 sm:p-10 lg:p-12 border border-slate-200/80 shadow-soft space-y-8 scroll-mt-28"
     >
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
         <div>
@@ -947,7 +668,7 @@ function NetEarningsCalculator() {
               onClick={() => handleTierSelect(info.tier, info.defaultPrice)}
               className={`text-left p-6 rounded-3xl transition-all duration-300 space-y-4 hover:-translate-y-1 ${
                 isSelected
-                  ? 'bg-[#0D0F17] text-white border-2 border-[#FACC15] shadow-tech-glow'
+                  ? 'bg-[#0D0F17] text-white border-2 border-[#FACC15] shadow-xl'
                   : 'bg-[#F8FAFC] text-[#0D0F17] border border-slate-200/90 hover:border-[#FACC15]'
               }`}
             >
@@ -960,11 +681,11 @@ function NetEarningsCalculator() {
                   Porte {info.tier} • {info.label}
                 </span>
                 <span
-                  className={`text-xs font-mono-code font-semibold ${
+                  className={`text-xs font-semibold ${
                     isSelected ? 'text-amber-300' : 'text-slate-500'
                   }`}
                 >
-                  SLA ≤ {info.slaHours}h
+                  SLA até {info.slaHours}h
                 </span>
               </div>
 
@@ -1010,12 +731,10 @@ function NetEarningsCalculator() {
               <Wallet className="w-4 h-4" />
               Simulador de Escrow & Repasse (Porte {activeTierInfo.tier})
             </span>
-            <span className="font-mono-code text-xs text-slate-400">
-              Split Automático: 85% Dev / 15% Plataforma
-            </span>
+            <span className="font-mono-code text-xs text-slate-400">Taxa única IDev: 15%</span>
           </div>
 
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             <div className="flex items-center justify-between text-xs">
               <span className="text-slate-300 font-medium">Valor acordado da microtarefa</span>
               <span className="font-mono-code text-lg font-extrabold text-[#FACC15]">
@@ -1032,17 +751,6 @@ function NetEarningsCalculator() {
               aria-label="Valor acordado da microtarefa"
               className="w-full accent-[#FACC15] cursor-pointer"
             />
-            {/* Barra visual animada de divisão 85% / 15% */}
-            <div className="h-2 w-full rounded-full bg-slate-800 overflow-hidden flex">
-              <div
-                style={{ width: '85%' }}
-                className="h-full bg-emerald-400 transition-all duration-300"
-              />
-              <div
-                style={{ width: '15%' }}
-                className="h-full bg-[#FACC15] transition-all duration-300"
-              />
-            </div>
             <div className="flex justify-between text-[11px] font-mono-code text-slate-400">
               <span>R$ 40</span>
               <span>R$ 150</span>
@@ -1053,7 +761,7 @@ function NetEarningsCalculator() {
         </div>
 
         <div className="lg:col-span-5 grid grid-cols-2 gap-3">
-          <div className="bg-slate-900/90 border border-emerald-500/30 rounded-2xl p-4">
+          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4">
             <div className="text-[11px] text-slate-400 font-medium">Líquido para o Dev (Pix)</div>
             <div className="text-xl sm:text-2xl font-extrabold text-emerald-400 font-mono-code mt-1">
               {formatBRL(devPayout)}
@@ -1082,12 +790,12 @@ export default function App() {
   const activeSteps = audience === 'client' ? CLIENT_FLOW_STEPS : DEV_FLOW_STEPS;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#0D0F17] flex flex-col">
-      {/* BARRA SUPERIOR DE TELEMETRIA AO VIVO */}
-      <LiveTelemetryBar />
+    <div className="relative min-h-screen text-[#0D0F17] flex flex-col">
+      {/* CAMADA DE BACKGROUND TECNOLÓGICO ANIMADO COM ELEMENTOS DO IDEV */}
+      <IdvTechBackground />
 
       {/* FLOATING PILL NAVBAR */}
-      <header className="sticky top-0 z-50 px-4 pt-3 pb-2">
+      <header className="sticky top-0 z-50 px-4 pt-4 pb-2">
         <div className="max-w-6xl mx-auto rounded-full bg-[#0D0F17]/95 backdrop-blur-md text-white px-5 sm:px-7 py-3 flex items-center justify-between shadow-dark-float border border-white/10">
           <a href="#topo" className="flex items-center gap-3 shrink-0">
             <img
@@ -1110,9 +818,9 @@ export default function App() {
           </nav>
 
           <div className="flex items-center gap-2.5">
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-mono-code font-semibold text-slate-300">
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-semibold text-slate-300">
               <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              RADAR_ON
+              Radar Ativo
             </span>
 
             <a
@@ -1138,7 +846,7 @@ export default function App() {
 
         {/* Menu Mobile */}
         {mobileMenuOpen && (
-          <div className="lg:hidden max-w-6xl mx-auto mt-2 rounded-3xl bg-[#0D0F17] text-white p-4 border border-white/10 shadow-dark-float animate-scale-in">
+          <div className="lg:hidden max-w-6xl mx-auto mt-2 rounded-3xl bg-[#0D0F17] text-white p-4 border border-white/10 shadow-dark-float">
             <nav className="grid grid-cols-2 gap-2">
               {NAV_LINKS.map((item) => (
                 <a
@@ -1155,38 +863,35 @@ export default function App() {
         )}
       </header>
 
-      <main id="topo" className="flex-1 max-w-6xl w-full mx-auto px-4 pt-4 pb-16 space-y-14">
-        {/* HERO SPLIT-SCREEN ASSIMÉTRICO COM BLUEPRINT GRID & HUD */}
-        <section className="relative bg-white rounded-4xl sm:rounded-5xl p-6 sm:p-10 lg:p-14 shadow-soft border border-slate-200/80 overflow-hidden">
-          {/* Malha tecnológica + glows volumétricos */}
-          <div className="pointer-events-none absolute inset-0 bg-tech-grid-light" />
-          <div className="pointer-events-none absolute -top-28 -right-28 h-80 w-80 rounded-full bg-amber-300/25 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-sky-400/10 blur-3xl" />
+      <main
+        id="topo"
+        className="relative z-10 flex-1 max-w-6xl w-full mx-auto px-4 pt-6 pb-16 space-y-14"
+      >
+        {/* HERO SPLIT-SCREEN ASSIMÉTRICO */}
+        <section className="relative bg-white/92 backdrop-blur-md rounded-4xl sm:rounded-5xl p-6 sm:p-10 lg:p-14 shadow-soft border border-slate-200/80 overflow-hidden">
+          <div className="pointer-events-none absolute -top-28 -right-28 h-80 w-80 rounded-full bg-amber-300/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-slate-900/5 blur-3xl" />
 
           <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             {/* Coluna Esquerda */}
             <div className="lg:col-span-6 space-y-7">
-              <div className="flex flex-wrap items-center gap-2">
-                <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#0D0F17] text-white text-xs font-bold shadow-sm">
-                  <span className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" />
-                  </span>
-                  <span>RADAR AO VIVO</span>
-                  <span className="text-slate-400">•</span>
-                  <span className="text-[#FACC15]">O Uber/iFood de Devs</span>
-                </div>
-
-                <span className="font-mono-code text-[11px] font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
-                  v2.0 • 99Negocia
+              <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#0D0F17] text-white text-xs font-bold shadow-sm">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" />
                 </span>
+                <span>RADAR AO VIVO</span>
+                <span className="text-slate-400">•</span>
+                <span className="text-[#FACC15]">O Uber/iFood de Devs</span>
               </div>
 
               <div className="space-y-4">
                 <h1 className="text-4xl sm:text-5xl lg:text-[3.35rem] font-extrabold text-[#0D0F17] tracking-tight leading-[1.08]">
                   Bugs travando seu deploy?{' '}
                   <span className="relative inline-block">
-                    <span className="relative z-10 text-shimmer-amber">Resolva em minutos.</span>
+                    <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500">
+                      Resolva em minutos.
+                    </span>
                     <span className="absolute bottom-1 left-0 right-0 h-3 bg-amber-200/45 -rotate-1 rounded-full -z-0" />
                   </span>
                 </h1>
@@ -1195,7 +900,7 @@ export default function App() {
                   O marketplace on-demand de microtarefas técnicas. Poste o escopo fechado, negocie o
                   valor em <strong>1 clique (99Negocia)</strong> sem leilão chato e receba o código
                   via{' '}
-                  <span className="font-mono-code text-xs bg-slate-100 px-2 py-0.5 rounded-md text-[#0D0F17] font-semibold border border-slate-200">
+                  <span className="font-mono-code text-xs bg-slate-100 px-2 py-0.5 rounded-md text-[#0D0F17] font-semibold">
                     Pull Request
                   </span>{' '}
                   com pagamento protegido em custódia.
@@ -1208,7 +913,7 @@ export default function App() {
                   href={PLATFORM_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-full bg-[#FACC15] hover:bg-[#EAB308] text-[#0D0F17] font-extrabold text-sm shadow-amber-pill transition-all duration-200 hover:-translate-y-0.5"
+                  className="group inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-full bg-[#FACC15] hover:bg-[#EAB308] text-[#0D0F17] font-extrabold text-sm shadow-amber-pill transition-all duration-200 hover:-translate-y-0.5"
                 >
                   <Zap className="w-4 h-4 fill-[#0D0F17]" />
                   <span>Publicar Tarefa Agora</span>
@@ -1227,25 +932,19 @@ export default function App() {
                 </a>
               </div>
 
-              {/* Chips HUD de Telemetria */}
-              <div className="bg-[#F8FAFC]/90 backdrop-blur-sm border border-slate-200/90 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex flex-wrap items-center gap-2 font-mono-code text-[11px]">
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#0D0F17] text-[#FACC15] font-bold">
-                    <Sparkles className="w-3 h-3" />
-                    HMAC-SHA256
+              {/* Nota de teste rápido */}
+              <div className="bg-[#F8FAFC] border border-slate-200/90 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5 text-xs font-semibold text-[#0D0F17]">
+                  <span className="h-8 w-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center shrink-0">
+                    <Sparkles className="w-4 h-4 text-amber-500" />
                   </span>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-semibold">
-                    BullMQ 48h
-                  </span>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 font-semibold">
-                    ACID Escrow
-                  </span>
+                  <span>Modo demonstração e autenticação GitHub OAuth disponíveis no app</span>
                 </div>
                 <a
-                  href="#arquitetura"
+                  href="#simulador"
                   className="text-xs font-extrabold text-amber-600 hover:text-amber-700 inline-flex items-center gap-1"
                 >
-                  Ver circuito técnico →
+                  Testar fluxo ao lado →
                 </a>
               </div>
 
@@ -1261,7 +960,7 @@ export default function App() {
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <Lock className="w-4 h-4 text-[#0D0F17]" />
-                  Zero Chat Pré-Match
+                  Zero Leilão & Zero Chat Pré-Match
                 </span>
               </div>
             </div>
@@ -1273,27 +972,34 @@ export default function App() {
           </div>
         </section>
 
-        {/* MARQUEE INFINITO DE STACKS & PROTOCOLOS */}
-        <TechMarquee />
+        {/* FAIXA DE STACKS SUPORTADAS */}
+        <section
+          aria-label="Stacks suportadas"
+          className="flex flex-wrap items-center justify-center gap-2.5 px-2"
+        >
+          {TECH_STACKS.map((tech) => (
+            <div
+              key={tech.name}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-sm text-xs font-bold text-[#0D0F17] hover:border-[#FACC15] hover:-translate-y-0.5 transition-all"
+            >
+              <span className={`h-2 w-2 rounded-full ${tech.dot}`} />
+              <span>{tech.name}</span>
+            </div>
+          ))}
+        </section>
 
-        {/* BARRA DE MÉTRICAS DARK COM TELEMETRIA HUD */}
-        <section className="relative bg-[#0D0F17] text-white rounded-4xl p-8 sm:p-10 shadow-xl border border-slate-800 overflow-hidden">
-          <div className="pointer-events-none absolute inset-0 bg-tech-grid-dark opacity-60" />
-          <div className="relative grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-            {KEY_METRICS.map((metric) => (
-              <div key={metric.label} className="space-y-2">
-                <span className="inline-block font-mono-code text-[10px] px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-400">
-                  {metric.tag}
-                </span>
-                <div
-                  className={`text-3xl sm:text-4xl font-extrabold font-mono-code ${metric.highlight}`}
-                >
-                  {metric.value}
-                </div>
-                <div className="text-xs text-slate-400 font-medium">{metric.label}</div>
+        {/* BARRA DE MÉTRICAS DARK */}
+        <section className="bg-[#0D0F17] text-white rounded-4xl p-8 sm:p-10 shadow-xl border border-slate-800 grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+          {KEY_METRICS.map((metric) => (
+            <div key={metric.label}>
+              <div
+                className={`text-3xl sm:text-4xl font-extrabold font-mono-code ${metric.highlight}`}
+              >
+                {metric.value}
               </div>
-            ))}
-          </div>
+              <div className="text-xs text-slate-400 mt-1.5 font-medium">{metric.label}</div>
+            </div>
+          ))}
         </section>
 
         {/* COMO FUNCIONA (TOGGLE DUAL: CONTRATANTE VS DESENVOLVEDOR) */}
@@ -1308,7 +1014,7 @@ export default function App() {
               </h2>
             </div>
 
-            <div className="inline-flex items-center p-1.5 rounded-full bg-white border border-slate-200 shadow-sm self-start">
+            <div className="inline-flex items-center p-1.5 rounded-full bg-white/95 border border-slate-200 shadow-sm self-start">
               <button
                 type="button"
                 onClick={() => setAudience('client')}
@@ -1338,7 +1044,7 @@ export default function App() {
             {activeSteps.map((item) => (
               <div
                 key={`${audience}-${item.step}`}
-                className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-card-hover hover:border-[#FACC15] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between space-y-4 animate-fade-in-up"
+                className="bg-white/95 backdrop-blur-sm p-6 rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between space-y-4"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
@@ -1360,13 +1066,10 @@ export default function App() {
           </div>
         </section>
 
-        {/* NOVA SEÇÃO: CIRCUITO DE ARQUITETURA & PAYLOADS EM TEMPO REAL */}
-        <ArchitectureCircuitSection />
-
         {/* CARDS LADO A LADO: CONTRATAR VS SER CONTRATADO */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Contratante */}
-          <div className="group bg-white hover:border-[#FACC15] border-2 border-slate-200/80 rounded-4xl p-8 sm:p-10 transition-all duration-300 shadow-sm hover:shadow-card-hover flex flex-col justify-between">
+          <div className="group bg-white/95 backdrop-blur-sm hover:border-[#FACC15] border-2 border-slate-200/80 rounded-4xl p-8 sm:p-10 transition-all duration-300 shadow-sm hover:shadow-card-hover flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-6">
                 <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-[#0D0F17] text-white">
@@ -1470,7 +1173,7 @@ export default function App() {
         {/* COMPARATIVO DIRETO: IDEV VS PLATAFORMAS TRADICIONAIS */}
         <section
           id="comparativo"
-          className="bg-white rounded-4xl p-7 sm:p-10 lg:p-12 border border-slate-200/80 shadow-soft space-y-6 scroll-mt-28"
+          className="bg-white/95 backdrop-blur-md rounded-4xl p-7 sm:p-10 lg:p-12 border border-slate-200/80 shadow-soft space-y-6 scroll-mt-28"
         >
           <div>
             <span className="text-xs font-extrabold text-amber-600 uppercase tracking-widest">
@@ -1516,11 +1219,9 @@ export default function App() {
         {/* ARQUITETURA & SEGURANÇA BANCÁRIA */}
         <section
           id="seguranca"
-          className="relative bg-[#0D0F17] text-white rounded-4xl sm:rounded-5xl p-7 sm:p-10 lg:p-12 border border-slate-800 shadow-xl space-y-8 overflow-hidden scroll-mt-28"
+          className="bg-[#0D0F17] text-white rounded-4xl sm:rounded-5xl p-7 sm:p-10 lg:p-12 border border-slate-800 shadow-xl space-y-8 scroll-mt-28"
         >
-          <div className="pointer-events-none absolute inset-0 bg-tech-grid-dark opacity-60" />
-
-          <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <span className="text-xs font-extrabold text-[#FACC15] uppercase tracking-widest">
                 Engenharia & Confiança
@@ -1534,21 +1235,20 @@ export default function App() {
             </span>
           </div>
 
-          <div className="relative grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {SECURITY_PILLARS.map((pillar, index) => {
               const icons = [KeyRound, Lock, Cpu, Database];
               const Icon = icons[index % icons.length];
               return (
                 <div
                   key={pillar.code}
-                  className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 space-y-3 hover:border-[#FACC15]/60 transition-all scanline-panel"
+                  className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 space-y-3 hover:border-[#FACC15]/50 transition-colors"
                 >
                   <div className="flex items-center justify-between">
                     <span className="inline-flex items-center gap-2 font-mono-code text-xs font-bold text-[#FACC15] bg-[#FACC15]/10 px-3 py-1 rounded-full border border-[#FACC15]/25">
                       <Icon className="w-3.5 h-3.5" />
                       {pillar.code}
                     </span>
-                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
                   </div>
                   <h3 className="text-lg font-bold text-white">{pillar.title}</h3>
                   <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
@@ -1584,7 +1284,7 @@ export default function App() {
             {FIELD_VALIDATION_QUOTES.map((item) => (
               <div
                 key={item.name}
-                className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm hover:shadow-card-hover hover:border-[#FACC15] transition-all flex flex-col justify-between space-y-4"
+                className="bg-white/95 backdrop-blur-sm rounded-3xl p-6 border border-slate-200/80 shadow-sm hover:shadow-card-hover transition-all flex flex-col justify-between space-y-4"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-2">
@@ -1614,7 +1314,7 @@ export default function App() {
         {/* FAQ INTERATIVO */}
         <section
           id="faq"
-          className="bg-white rounded-4xl p-7 sm:p-10 lg:p-12 border border-slate-200/80 shadow-soft space-y-6 scroll-mt-28"
+          className="bg-white/95 backdrop-blur-md rounded-4xl p-7 sm:p-10 lg:p-12 border border-slate-200/80 shadow-soft space-y-6 scroll-mt-28"
         >
           <div>
             <span className="text-xs font-extrabold text-amber-600 uppercase tracking-widest">
@@ -1645,7 +1345,7 @@ export default function App() {
                     />
                   </button>
                   {isOpen && (
-                    <p className="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed pr-6 animate-fade-in-up">
+                    <p className="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed pr-6">
                       {faq.answer}
                     </p>
                   )}
@@ -1657,7 +1357,6 @@ export default function App() {
 
         {/* BANNER CTA FINAL */}
         <section className="relative bg-[#0D0F17] text-white rounded-4xl sm:rounded-5xl p-8 sm:p-12 lg:p-14 border border-slate-800 shadow-xl overflow-hidden text-center space-y-6">
-          <div className="pointer-events-none absolute inset-0 bg-tech-grid-dark opacity-70" />
           <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-64 w-96 rounded-full bg-[#FACC15]/15 blur-3xl" />
 
           <div className="relative flex justify-center">
@@ -1704,7 +1403,7 @@ export default function App() {
       </main>
 
       {/* RODAPÉ */}
-      <footer className="bg-[#0D0F17] text-slate-400 border-t border-slate-800 py-10 px-4">
+      <footer className="relative z-10 bg-[#0D0F17] text-slate-400 border-t border-slate-800 py-10 px-4">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
             <img

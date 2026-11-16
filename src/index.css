@@ -8,7 +8,7 @@ html {
 
 body {
   font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-  background-color: #f8fafc;
+  background-color: #f4f7fb;
   color: #0d0f17;
   overflow-x: hidden;
 }
@@ -17,130 +17,110 @@ body {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Malhas blueprint / HUD tecnológicas */
-.bg-tech-grid-light {
+/* =========================================================
+   CAMADA DE BACKGROUND TECNOLÓGICO DO IDEV (APENAS NO FUNDO)
+   ========================================================= */
+
+.idev-bg-grid {
   background-image:
-    linear-gradient(to right, rgba(15, 23, 42, 0.055) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(15, 23, 42, 0.055) 1px, transparent 1px);
-  background-size: 32px 32px;
-  mask-image: radial-gradient(ellipse 88% 82% at 50% 45%, #000 55%, transparent 100%);
+    linear-gradient(to right, rgba(13, 15, 23, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(13, 15, 23, 0.055) 1px, transparent 1px),
+    radial-gradient(circle at 1px 1px, rgba(250, 204, 21, 0.35) 1.25px, transparent 0);
+  background-size:
+    44px 44px,
+    44px 44px,
+    44px 44px;
 }
 
-.bg-tech-grid-dark {
-  background-image:
-    linear-gradient(to right, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
-  background-size: 28px 28px;
-}
-
-/* Radar Sonar 360° */
-@keyframes radarSpin {
-  from {
-    transform: rotate(0deg);
+@keyframes bgCircuitPulse {
+  0%,
+  100% {
+    opacity: 0.25;
   }
-  to {
-    transform: rotate(360deg);
+  50% {
+    opacity: 0.7;
   }
 }
 
-.radar-sweep {
-  background: conic-gradient(
-    from 0deg,
-    rgba(250, 204, 21, 0.42) 0deg,
-    rgba(34, 197, 94, 0.16) 55deg,
-    transparent 110deg,
-    transparent 360deg
-  );
-  animation: radarSpin 3.4s linear infinite;
+.bg-circuit-pulse {
+  animation: bgCircuitPulse 4.5s ease-in-out infinite;
 }
 
-/* Scanline e feixe de varredura para painéis HUD */
-@keyframes scanBeam {
+@keyframes bgBeamMove {
   0% {
-    transform: translateY(-100%);
+    stroke-dashoffset: 380;
     opacity: 0;
   }
-  20% {
-    opacity: 0.45;
+  15% {
+    opacity: 0.95;
   }
-  80% {
-    opacity: 0.45;
+  85% {
+    opacity: 0.95;
   }
   100% {
-    transform: translateY(500%);
+    stroke-dashoffset: -380;
     opacity: 0;
   }
 }
 
-.scanline-panel {
-  background-image: repeating-linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.018) 0px,
-    rgba(255, 255, 255, 0.018) 1px,
-    transparent 1px,
-    transparent 4px
-  );
+.bg-beam-line {
+  stroke-dasharray: 95 285;
+  animation: bgBeamMove 7.5s linear infinite;
 }
 
-.scanline-beam {
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    rgba(250, 204, 21, 0.08),
-    rgba(56, 189, 248, 0.08),
-    transparent
-  );
-  animation: scanBeam 5.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+.bg-beam-line-slow {
+  stroke-dasharray: 120 340;
+  animation: bgBeamMove 11s linear infinite reverse;
 }
 
-/* Borda luminosa animada */
-@keyframes borderFlow {
-  0% {
-    background-position: 0% 50%;
+@keyframes bgFloatSlow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
   }
   50% {
-    background-position: 100% 50%;
+    transform: translate3d(0, -18px, 0) rotate(1.5deg);
   }
+}
+
+@keyframes bgFloatReverse {
+  0%,
   100% {
-    background-position: 0% 50%;
-  }
-}
-
-.tech-border-glow {
-  background: linear-gradient(
-    120deg,
-    rgba(250, 204, 21, 0.65),
-    rgba(56, 189, 248, 0.45),
-    rgba(34, 197, 94, 0.55),
-    rgba(250, 204, 21, 0.65)
-  );
-  background-size: 260% 260%;
-  animation: borderFlow 6s ease infinite;
-}
-
-/* Shimmer metálico âmbar para Headline */
-@keyframes textShimmer {
-  0% {
-    background-position: 0% 50%;
+    transform: translate3d(0, 0, 0) rotate(0deg);
   }
   50% {
-    background-position: 100% 50%;
+    transform: translate3d(0, 16px, 0) rotate(-1.5deg);
+  }
+}
+
+@keyframes bgOrbit {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(18px, -14px, 0) scale(1.04);
+  }
+  66% {
+    transform: translate3d(-14px, 12px, 0) scale(0.97);
   }
   100% {
-    background-position: 0% 50%;
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 
-.text-shimmer-amber {
-  background: linear-gradient(90deg, #eab308 0%, #facc15 35%, #fef08a 50%, #f59e0b 75%, #eab308 100%);
-  background-size: 220% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: textShimmer 4.5s linear infinite;
+.bg-float-slow {
+  animation: bgFloatSlow 9s ease-in-out infinite;
 }
 
-/* Flutuação suave */
+.bg-float-reverse {
+  animation: bgFloatReverse 11s ease-in-out infinite;
+}
+
+.bg-orbit {
+  animation: bgOrbit 14s ease-in-out infinite;
+}
+
+/* Flutuação discreta original do simulador da V1 */
 @keyframes floatSlow {
   0%,
   100% {
@@ -152,100 +132,5 @@ body {
 }
 
 .animate-float-slow {
-  animation: floatSlow 5.5s ease-in-out infinite;
-}
-
-/* Marquee infinito de tecnologias */
-@keyframes marquee {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-marquee {
-  display: flex;
-  width: max-content;
-  animation: marquee 28s linear infinite;
-}
-
-.animate-marquee:hover {
-  animation-play-state: paused;
-}
-
-/* Fluxo de pacotes de dados em trilhas de circuito */
-@keyframes packetFlow {
-  0% {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-  20% {
-    opacity: 1;
-  }
-  80% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(350%);
-    opacity: 0;
-  }
-}
-
-.animate-packet-flow {
-  animation: packetFlow 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-@keyframes packetFlowVertical {
-  0% {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-  20% {
-    opacity: 1;
-  }
-  80% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(350%);
-    opacity: 0;
-  }
-}
-
-.animate-packet-flow-v {
-  animation: packetFlowVertical 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-/* Anel sonar pulsante */
-@keyframes pulseRing {
-  0% {
-    transform: scale(0.75);
-    opacity: 0.85;
-  }
-  100% {
-    transform: scale(2.1);
-    opacity: 0;
-  }
-}
-
-.animate-pulse-ring {
-  animation: pulseRing 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-}
-
-/* Cursor piscante de terminal */
-@keyframes blinkCursor {
-  0%,
-  49% {
-    opacity: 1;
-  }
-  50%,
-  100% {
-    opacity: 0;
-  }
-}
-
-.cursor-blink {
-  animation: blinkCursor 1s step-end infinite;
+  animation: floatSlow 5s ease-in-out infinite;
 }
