@@ -1,6 +1,6 @@
 # IDev — Landing Page Oficial
 
-> **O Uber/iFood de Devs:** Marketplace on-demand de microtarefas técnicas com negociação em 1 clique (**Modelo 99Negocia**), acesso automatizado via **GitHub API**, homologação por **Webhooks** e custódia segura (**Escrow**) com proteção **Auto-Release de 48h**.
+> **Microtarefas Sob Demanda:** Marketplace on-demand de microtarefas técnicas com negociação em 1 clique, acesso automatizado via **GitHub API**, homologação por **Webhooks** e custódia segura (**Escrow**) com proteção **Auto-Release de 48h**.
 
 ## Links Oficiais
 
@@ -9,7 +9,7 @@
 
 ## Arquitetura & Destaques da Landing Page
 
-- **Simulador Interativo Multi-Etapas:** Demonstra ao vivo o fluxo completo em 3 abas (*Radar 99Negocia*, *GitHub API & Webhook*, *Timer 48h & Proteção Bilateral*).
+- **Simulador Interativo Multi-Etapas:** Demonstra ao vivo o fluxo completo em 3 abas (*Radar Ao Vivo*, *GitHub API & Webhook*, *Timer 48h & Proteção Bilateral*).
 - **Fluxo Dual (Contratante vs. Desenvolvedor):** Toggle interativo explicando a jornada completa de ponta a ponta.
 - **Calculadora & Tabela Referencial P / M / G:** Simulação transparente de valores recomendados, SLA e ganho líquido via Pix (85% para o dev, 15% taxa de serviço).
 - **Segurança & Arquitetura Real:** Detalhamento de HMAC-SHA256, AES-256-GCM, BullMQ + Redis e transações ACID no Escrow.

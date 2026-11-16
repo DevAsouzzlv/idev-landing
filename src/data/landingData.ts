@@ -144,7 +144,7 @@ export const DEV_FLOW_STEPS: FlowStep[] = [
   },
   {
     step: '02',
-    title: 'Negocie com botões 99Negocia',
+    title: 'Negocie com Contraproposta Rápida',
     desc: 'Curtiu o chamado? Aceite pelo valor em custódia ou dispare +R$ 20, +R$ 40 ou +R$ 60 em 1 clique.',
     detail: 'O saldo já está travado em Escrow antes de você escrever 1 linha.',
   },
@@ -236,7 +236,7 @@ export const COMPARISON_ROWS: ComparisonRow[] = [
   {
     criterion: 'Modelo de precificação',
     traditional: 'Leilão predatório: vence quem aceita cobrar menos.',
-    idev: '99Negocia transacional: preço fechado ou contraproposta em 1 clique.',
+    idev: 'Negociação em 1 clique: preço fechado ou contraproposta rápida.',
   },
   {
     criterion: 'Comunicação pré-contrato',
@@ -314,7 +314,7 @@ export const FIELD_VALIDATION_QUOTES: ValidationQuote[] = [
     channel: 'LinkedIn',
     quote:
       'Usaria sim, com certeza! Principalmente pela praticidade de pegar tarefas rápidas sem precisar ficar enviando propostas.',
-    highlight: 'Abandonou Workana/Fiverr por falta de retorno.',
+    highlight: 'Abandonou plataformas tradicionais por falta de retorno.',
     status: 'Aderiu ao modelo',
   },
   {
@@ -371,7 +371,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   {
     question: 'Por que não existe chat livre antes do match no IDev?',
     answer:
-      'O chat aberto antes do aceite gera leilões demorados, mensagens genéricas e perda de tempo dos dois lados. No IDev, toda negociação de valor acontece em 1 clique via botões transacionais (modelo 99Negocia). Depois que o match é fechado, uma sala técnica é liberada exclusivamente para dúvidas do repositório e da entrega.',
+      'O chat aberto antes do aceite gera leilões demorados, mensagens genéricas e perda de tempo dos dois lados. No IDev, toda negociação de valor acontece em 1 clique via botões transacionais. Depois que o match é fechado, uma sala técnica é liberada exclusivamente para dúvidas do repositório e da entrega.',
   },
   {
     question: 'Como funciona o acesso a repositórios privados sem risco?',

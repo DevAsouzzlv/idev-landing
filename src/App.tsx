@@ -191,7 +191,7 @@ function IdvTechBackground() {
 
       <div className="hidden xl:flex items-center gap-2 absolute top-[50%] right-[1.8%] px-3.5 py-2 rounded-2xl bg-[#FACC15]/90 text-[#0D0F17] border border-amber-300 shadow-md opacity-80 bg-float-slow">
         <Zap className="w-3.5 h-3.5 fill-[#0D0F17]" />
-        <span className="font-mono-code text-[11px] font-extrabold">99Negocia • 1-Click</span>
+        <span className="font-mono-code text-[11px] font-extrabold">Match • 1-Click</span>
       </div>
 
       <div className="hidden xl:flex items-center gap-2 absolute bottom-32 left-[3%] px-3.5 py-2 rounded-2xl bg-[#0D0F17]/85 text-emerald-400 border border-white/10 shadow-lg opacity-75 bg-float-reverse">
@@ -253,7 +253,7 @@ function HeroSimulator() {
       <div className="grid grid-cols-3 gap-1.5 bg-slate-900/90 p-1 rounded-2xl border border-slate-800">
         {(
           [
-            { id: 'radar', label: '1. Radar 99Negocia' },
+            { id: 'radar', label: '1. Radar Ao Vivo' },
             { id: 'github', label: '2. GitHub API' },
             { id: 'timer', label: '3. Timer 48h' },
           ] as const
@@ -276,7 +276,7 @@ function HeroSimulator() {
         })}
       </div>
 
-      {/* ABA 1: RADAR 99NEGOCIA */}
+      {/* ABA 1: RADAR AO VIVO */}
       {activeTab === 'radar' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-2">
@@ -882,7 +882,7 @@ export default function App() {
                 </span>
                 <span>RADAR AO VIVO</span>
                 <span className="text-slate-400">•</span>
-                <span className="text-[#FACC15]">O Uber/iFood de Devs</span>
+                <span className="text-[#FACC15]">Microtarefas Sob Demanda</span>
               </div>
 
               <div className="space-y-4">
@@ -898,7 +898,7 @@ export default function App() {
 
                 <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
                   O marketplace on-demand de microtarefas técnicas. Poste o escopo fechado, negocie o
-                  valor em <strong>1 clique (99Negocia)</strong> sem leilão chato e receba o código
+                  valor em <strong>1 clique</strong> sem leilão chato e receba o código
                   via{' '}
                   <span className="font-mono-code text-xs bg-slate-100 px-2 py-0.5 rounded-md text-[#0D0F17] font-semibold">
                     Pull Request
@@ -1189,9 +1189,9 @@ export default function App() {
               <thead>
                 <tr className="border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
                   <th className="py-3.5 pr-4 font-bold">Critério</th>
-                  <th className="py-3.5 px-4 font-bold">Workana / Fiverr / Tradicionais</th>
+                  <th className="py-3.5 px-4 font-bold">Plataformas Tradicionais</th>
                   <th className="py-3.5 pl-4 font-extrabold text-[#0D0F17] bg-[#FACC15]/15 rounded-t-2xl">
-                    IDev (On-Demand 99Negocia)
+                    IDev (On-Demand)
                   </th>
                 </tr>
               </thead>
@@ -1372,7 +1372,7 @@ export default function App() {
               Pronto para resolver ou monetizar sua próxima microtarefa em minutos?
             </h2>
             <p className="text-sm sm:text-base text-slate-300">
-              Entre na plataforma em produção agora mesmo e experimente o fluxo completo 99Negocia +
+              Entre na plataforma em produção agora mesmo e experimente a negociação em 1 clique +
               GitHub API + Escrow 48h.
             </p>
           </div>
